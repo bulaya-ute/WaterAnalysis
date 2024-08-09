@@ -1,0 +1,15 @@
+body {
+    background-color: #343a40;
+}
+
+.card {
+    border-radius: 0.75rem;
+}
+
+.card-title {
+    font-size: 1.25rem;
+}
+
+.card-text {
+    font-size: 1.5rem;
+}
