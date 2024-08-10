@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "name": "Win32",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "C:/Users/EDWIN DEN/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/**",
+        "C:/Users/EDWIN DEN/AppData/Local/Arduino15/packages/esp8266/tools/**",
+        "C:/Users/EDWIN DEN/Documents/Arduino/libraries/**"
+      ],
+      "defines": [
+        "_DEBUG",
+        "UNICODE",
+        "_UNICODE"
+      ],
+      "windowsSdkVersion": "10.0.22000.0",
+      "compilerPath": "cl.exe",
+      "cStandard": "c17",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "msvc-x64"
+    }
+  ],
+  "version": 4
+}
