@@ -3,7 +3,7 @@
 #include <ArduinoJson.h>
 
 // Network credentials
-const char* ssid = "wifi_ssid";
+const char* ssid = "WaterAnalysisSystem";
 const char* password = "wifi_password";
 
 // Server IP and Port
