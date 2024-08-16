@@ -12,7 +12,7 @@
         }
     </style>
 </head>
-<body class=" text-white">
+<body class="text-white">
 <div class="container mt-5">
     <div class="text-center mb-5">
         <h1>Water Analysis</h1>
@@ -71,11 +71,11 @@
     <div class="row text-center">
         <div class="col-md-2"></div>
         <div class="col-md-8">
-            <div class="card bg-primary text-white mb-4">
+            <div id="analysis-card" class="card text-white mb-4">
                 <div class="card-body">
                     <h3 class="card-title">Analysis</h3>
-                    <p id="analysis" class="card-text">{{ data.analysis.safety_percentage }}% safe</p>
-                    <div id="description" class="card rounded bg-danger">
+                    <p id="analysis" class="card-text">{{ data.analysis.safety_rating * 100 }}% safe</p>
+                    <div id="description" class="card p-2">
                         <p>{{ data.analysis.description }}</p>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
 <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 
-<!-- JavaScript to update the values -->
+<!-- JavaScript to update the values and change the card color -->
 <script>
     function fetchData() {
         fetch('/data')
@@ -97,14 +97,24 @@
             .then(data => {
                 document.getElementById('turbidity').innerText = data.turbidity;
                 document.getElementById('temperature').innerText = data.temperature;
-                document.getElementById('voltage').innerText = data.voltage;
-                document.getElementById('analysis').innerText = data.analysis;
+                document.getElementById('analysis').innerText = `${data.analysis.safety_rating * 100}% safe`;
+                document.getElementById('description').innerText = data.analysis.description;
+
+                // Set the card background color based on the analysis color
+                const analysisCard = document.getElementById('analysis-card');
+                analysisCard.style.backgroundColor = data.analysis.color;
+
+                // Set the card background color based on the description color_alt
+                const analysisDescription = document.getElementById('description');
+                analysisDescription.style.backgroundColor = data.analysis.color_alt;
+
+
             })
             .catch(error => console.error('Error fetching data:', error));
     }
 
-    // Fetch new data every 0.3 seconds
-    setInterval(fetchData, 300);
+    // Fetch new data every second
+    setInterval(fetchData, 1000);
 
     // Initial fetch
     fetchData();

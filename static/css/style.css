@@ -6,6 +6,13 @@ body {
     background-color: #1d2d44;
 }
 
+#description {
+    border-radius: 7pt;
+}
+
+#analysis-card {
+    border-radius: 10pt;
+}
 
 .sensor {
     background-color: #3e5c76;

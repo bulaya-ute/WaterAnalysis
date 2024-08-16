@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 import random
 
+from utils import water_safety_analysis, rgb_to_hex, darken_color, hex_to_rgb
+
 app = Flask(__name__)
 
 # Global variable to store sensor data
@@ -9,8 +11,10 @@ data = {
     'temperature': 0.0,
     'voltage': 0.0,
     'analysis': {
-        "safety_percentage": 52.8,
-        "description": "Drink only in an emergency"
+        "safety_rating": 0.528,
+        "description": "Drink only in an emergency",
+        "color": "#198754",
+        "color_alt": rgb_to_hex(darken_color(hex_to_rgb("#198754")))
     }
 }
 
@@ -28,8 +32,11 @@ def update_data():
         data['turbidity'] = json_data.get('turbidity', data['turbidity'])
         data['temperature'] = json_data.get('temperature', data['temperature'])
         data['voltage'] = json_data.get('voltage', data['voltage'])
-        data['analysis']["safety_percentage"] = json_data.get('analysis', data['analysis']["safety_percentage"])
-        data['analysis']["description"] = json_data.get('description', data['analysis']["description"])
+        analysis_data = water_safety_analysis(data['temperature'], data['voltage'], safe_color="#198754", unsafe_color="#dc3545")
+        data['analysis']["safety_percentage"] = json_data.get(analysis_data["safety_rating"], data['analysis']["safety_percentage"])
+        data['analysis']["description"] = json_data.get(analysis_data["description"], data['analysis']["description"])
+        data['analysis']["color"] = json_data.get(analysis_data["color"], data['analysis']["description"])
+        data['analysis']["color_alt"] = json_data.get(analysis_data["color_alt"], data['analysis']["description"])
         return jsonify({"status": "success"}), 200
     return jsonify({"status": "error"}), 400
 
