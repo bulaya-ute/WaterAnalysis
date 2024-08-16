@@ -8,7 +8,10 @@ data = {
     'turbidity': 0.0,
     'temperature': 0.0,
     'voltage': 0.0,
-    'analysis': 0.0
+    'analysis': {
+        "safety_percentage": 52.8,
+        "description": "Drink only in an emergency"
+    }
 }
 
 
@@ -25,7 +28,8 @@ def update_data():
         data['turbidity'] = json_data.get('turbidity', data['turbidity'])
         data['temperature'] = json_data.get('temperature', data['temperature'])
         data['voltage'] = json_data.get('voltage', data['voltage'])
-        data['analysis'] = json_data.get('analysis', data['analysis'])
+        data['analysis']["safety_percentage"] = json_data.get('analysis', data['analysis']["safety_percentage"])
+        data['analysis']["description"] = json_data.get('description', data['analysis']["description"])
         return jsonify({"status": "success"}), 200
     return jsonify({"status": "error"}), 400
 

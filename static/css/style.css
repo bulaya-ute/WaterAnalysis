@@ -1,25 +1,20 @@
 body {
-    background-color: #343a40;
+    background-color: #0d1321;
 }
 
 .card-header {
-    /*background-color: #2d3237;*/
-    /*border-radius: 0.75rem;*/
+    background-color: #1d2d44;
 }
 
 
-/*.card {*/
-/*    border-radius: 0.75rem;*/
-/*}*/
-
-.card-title {
-    font-size: 1.25rem;
+.sensor {
+    background-color: #3e5c76;
 }
-
 
 .card-text {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
 }
+
 
 .table-borderless > tbody > tr > td,
 .table-borderless > tbody > tr > th,
