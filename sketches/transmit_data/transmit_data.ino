@@ -7,7 +7,7 @@ const char* ssid = "WaterAnalysisSystem";
 const char* password = "wifi_password";
 
 // List of high priority fourth octets
-const int highPriorityIPs[] = { 68, 212, 77, 78, 79 };
+const int highPriorityIPs[] = { 212, 68, 77, 78, 79 };
 const int numHighPriorityIPs = sizeof(highPriorityIPs) / sizeof(highPriorityIPs[0]);
 
 int buzzerPin = 2;
@@ -41,6 +41,7 @@ void setup() {
   Serial.println("Server name: " + serverName);
 }
 
+
 void loop() {
   Vo = analogRead(ThermistorPin);
 
@@ -51,11 +52,21 @@ void loop() {
   logR2 = log(R2);
   T = (1.0 / (c1 + c2 * logR2 + c3 * logR2 * logR2 * logR2));
   T = T - 273.15;  // Convert Kelvin to Celsius
-  // T = (T * 9.0)/ 5.0 + 32.0; // Convert Celsius to Fahrenheit
 
-  Serial.print("Temperature: ");
-  Serial.print(T);
-  Serial.println(" C");
+
+  // Put the values here!!! Random values have been put in as placeholders
+  // for testing purposes!
+
+  int temp_adc = random(0, 4095);  // raw ADC for the temperature sensor
+  double temp_val = random(0, 55);  // Calculated temperature in degrees C
+  double turb_adc = random(0, 4095);  // raw ADC for the turbidity sensor
+  double turb_val = random(0, 100) / 100.0;  // Caluculated value for turbidity. It should be a ratio, 0.0 to 1.0
+
+
+
+  // No need to touch these, unless you're just changing the other input parameters
+  double temp_volt = calculateVoltage(temp_adc, 4095, 5.0);
+  double turb_volt = calculateVoltage(turb_adc, 4095, 5.0);
 
   if (T >= minTemp && T <= maxTemp) {
     beep();
@@ -73,11 +84,14 @@ void loop() {
     http.addHeader("Content-Type", "application/json");
 
     // JSON data
-    StaticJsonDocument<200> jsonData;
-    jsonData["turbidity"] = random(0, 100);
-    jsonData["temperature"] = T;
-    jsonData["voltage"] = random(110, 230);
-    jsonData["analysis"] = random(200, 1000);
+    StaticJsonDocument<256> jsonData;
+    jsonData["temperature_sensor"]["rawADC"] = temp_adc;
+    jsonData["temperature_sensor"]["voltage"] = temp_volt;
+    jsonData["temperature_sensor"]["temperature"] = temp_val;
+
+    jsonData["turbidity_sensor"]["rawADC"] = turb_adc;
+    jsonData["turbidity_sensor"]["voltage"] = turb_volt;
+    jsonData["turbidity_sensor"]["turbidity"] = turb_val;
 
     // Serialize JSON to string
     String requestBody;
@@ -101,9 +115,10 @@ void loop() {
     Serial.println("WiFi Disconnected");
   }
 
-  // Send data every 5 seconds
-  delay(5000);
+  // Send data every 3 seconds
+  delay(3000);
 }
+
 
 void beep() {
   for(int i=0; i <= 3; i++){
@@ -113,6 +128,18 @@ void beep() {
     delay(500);
   }
 }
+
+
+double calculateVoltage(int rawADC, int maxADC, double maxVoltage) {
+    // Ensure rawADC is within the valid range
+    if (rawADC < 0) rawADC = 0;
+    if (rawADC > maxADC) rawADC = maxADC;
+
+    // Calculate the voltage
+    double voltage = (double(rawADC) / maxADC) * maxVoltage;
+    return voltage;
+}
+
 
 
 String findServerIP() {

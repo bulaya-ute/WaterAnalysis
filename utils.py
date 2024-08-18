@@ -116,7 +116,7 @@ def darken_color(rgb, factor=0.3):
     return tuple(max(int(c * (1 - factor)), 0) for c in rgb)
 
 
-def water_safety_analysis(temperature, turbidity, safe_color=None, unsafe_color=None):
+def analyze_data(temperature, turbidity, safe_color=None, unsafe_color=None) -> dict:
     def scale(x):
         return ((1 / (1 + 2 ** (-x))) - 0.5) * 2
 
@@ -192,7 +192,7 @@ if __name__ == "__main__":
     safe_color = "#00ff00"  # Green in hex
     unsafe_color = "#ff0000"  # Red in hex
 
-    result = water_safety_analysis(temperature_ratio, turbidity_ratio, safe_color, unsafe_color)
+    result = analyze_data(temperature_ratio, turbidity_ratio, safe_color, unsafe_color)
     print(f"Safety Rating: {result['safety_rating']}")
     print(f"Description: {result['description']}")
     print(f"Color: {result.get('color', 'No color provided')}")  # Should return hex color

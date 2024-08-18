@@ -22,6 +22,13 @@ body {
     font-size: 1.1rem;
 }
 
+.col-A {
+    width: 70%;
+}
+.col-B {
+    width: 30%;
+}
+
 
 .table-borderless > tbody > tr > td,
 .table-borderless > tbody > tr > th,

@@ -25,18 +25,18 @@
                 <div class="card-body sensor">
                     <table class="table table-borderless table-sm">
                         <tbody class="text-left">
-                            <tr>
-                                <td>Raw ADC:</td>
-                                <td>4095</td>
-                            </tr>
-                            <tr>
-                                <td>Voltage:</td>
-                                <td>2.67V</td>
-                            </tr>
-                            <tr>
-                                <td>Turbidity:</td>
-                                <td id="turbidity">{{ data.turbidity }}</td>
-                            </tr>
+                        <tr>
+                            <td class="col-A">Raw ADC:</td>
+                            <td id="turb_raw" class="col-B">{{ data.turbidity_sensor.rawADC }}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-A">Voltage:</td>
+                            <td id="turb_voltage" class="col-B">{{ data.turbidity_sensor.voltage }}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-A">Turbidity:</td>
+                            <td id="turbidity" class="col-B">{{ data.turbidity }}</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -49,18 +49,18 @@
                 <div class="card-body sensor">
                     <table class="table table-borderless table-sm">
                         <tbody>
-                            <tr>
-                                <td>Raw ADC:</td>
-                                <td>4095</td>
-                            </tr>
-                            <tr>
-                                <td>Voltage:</td>
-                                <td>3.24V</td>
-                            </tr>
-                            <tr>
-                                <td>Temperature:</td>
-                                <td id="temperature">{{ data.temperature }}C</td>
-                            </tr>
+                        <tr>
+                            <td class="col-A">Raw ADC:</td>
+                            <td id="temp_raw" class="col-B">{{ data.temperature_sensor.rawADC }}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-A">Voltage:</td>
+                            <td id="temp_voltage" class="col-B">{{ data.temperature_sensor.voltage }}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-A">Temperature (C):</td>
+                            <td id="temperature" class="col-B">{{ data.temperature_sensor.temperature }}C</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -95,9 +95,16 @@
         fetch('/data')
             .then(response => response.json())
             .then(data => {
-                document.getElementById('turbidity').innerText = data.turbidity;
-                document.getElementById('temperature').innerText = data.temperature;
-                document.getElementById('analysis').innerText = `${data.analysis.safety_rating * 100}% safe`;
+                // Update the sensor data
+                document.getElementById('turb_raw').innerText = data.turbidity_sensor.rawADC;
+                document.getElementById('turb_voltage').innerText = data.turbidity_sensor.voltage.toFixed(1);
+                document.getElementById('turbidity').innerText = data.turbidity_sensor.turbidity.toFixed(1);
+                document.getElementById('temp_raw').innerText = data.temperature_sensor.rawADC;
+                document.getElementById('temp_voltage').innerText = data.temperature_sensor.voltage.toFixed(1);
+                document.getElementById('temperature').innerText = data.temperature_sensor.temperature.toFixed(1);
+
+                // Update the analysis data
+                document.getElementById('analysis').innerText = `${(data.analysis.safety_rating * 100).toFixed(1)}% safe`;
                 document.getElementById('description').innerText = data.analysis.description;
 
                 // Set the card background color based on the analysis color
