@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 safe_color = "#198754"  # Color for 100% safe
 unsafe_color = "#dc3545"  # Color for 0% safe
-sensor_timeout = 5  # time in seconds. If elapsed without getting a request from the sensor, it is assumed offline
+sensor_timeout = 2  # time in seconds. If elapsed without getting a request from the sensor, it is assumed offline
 sensor_last_online = None
 
 # Global variable to store sensor data

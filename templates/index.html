@@ -128,8 +128,8 @@
             .catch(error => console.error('Error fetching data:', error));
     }
 
-    // Fetch new data every second
-    setInterval(fetchData, 1000);
+    // Fetch new data every quarter second
+    setInterval(fetchData, 250);
 
     // Initial fetch
     fetchData();

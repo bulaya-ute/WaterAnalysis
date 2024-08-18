@@ -19,6 +19,8 @@ float R1 = 10000;
 float logR2, R2, T;
 float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
 
+int transmissionDelay = 1000;  // time delay in milliseconds in between transmissions
+
 String serverName = "";
 int timeout = 500;
 
@@ -115,8 +117,8 @@ void loop() {
     Serial.println("WiFi Disconnected");
   }
 
-  // Send data every 3 seconds
-  delay(3000);
+  // Send data after specified delay
+  delay(transmissionDelay);
 }
 
 
