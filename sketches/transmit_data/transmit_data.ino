@@ -24,7 +24,7 @@ float R1 = 10000;
 float logR2, R2, T;
 float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
 
-String serverName = "";
+String serverName = "127.0.01:5000";
 int timeout = 500;
 
 int getAverageSensorValue() {
@@ -61,12 +61,11 @@ void loop() {
   Vo = analogRead(ThermistorPin);
   int sensorValue = getAverageSensorValue();
   float voltage = sensorValue * (5.0 / 4095.0); // Convert to voltage (assuming 3.3V reference)
-  int turbidity = map(sensorValue, 0, 4095, 100, 0); // Adjusted for ESP32's 12-bit ADC
+  double turbidity = map(sensorValue, 0, 4095, 100, 0); // Adjusted for ESP32's 12-bit ADC
 
   Serial.print("RAW: ");
   Serial.println(Vo);
 
- 
   if (Vo != 0) {
     R2 = R1 * (4095.0 / (float)Vo - 1.0); // 4095 because of 12-bit ADC
     if (R2 > 0) {
@@ -84,14 +83,20 @@ void loop() {
     Serial.println("Error: Vo is zero.");
   }
 
-
+  Serial.print("Raw Sensor Value: ");
+  Serial.print(sensorValue);
+  Serial.print(" | Voltage: ");
+  Serial.print(voltage, 2); // Print voltage with 2 decimal places
+  Serial.print("V | Turbidity: ");
+  Serial.println(turbidity);
+ 
   // Put the values here!!! Random values have been put in as placeholders
   // for testing purposes!
 
   int temp_adc = Vo;  // raw ADC for the temperature sensor
   double temp_val = T;  // Calculated temperature in degrees C
   double turb_adc = sensorValue;  // raw ADC for the turbidity sensor
-  double turb_val = turbidity / 100 ;  // Caluculated value for turbidity. It should be a ratio, 0.0 to 1.0
+  double turb_val = (turbidity / 100) ;  // Caluculated value for turbidity. It should be a ratio, 0.0 to 1.0
 
 
 
