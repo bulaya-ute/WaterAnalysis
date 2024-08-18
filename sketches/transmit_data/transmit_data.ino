@@ -10,8 +10,13 @@ const char* password = "wifi_password";
 const int highPriorityIPs[] = { 212, 68, 77, 78, 79 };
 const int numHighPriorityIPs = sizeof(highPriorityIPs) / sizeof(highPriorityIPs[0]);
 
-int buzzerPin = 2;
-int ThermistorPin = 0;
+#define sensorPin 33 // 33 for ESP32
+#define SAMPLES 10
+int readings[SAMPLES];
+int readIndex = 0;
+long total = 0;
+int buzzerPin = 32;
+int ThermistorPin = 34;
 int Vo;
 float minTemp = 20.0;
 float maxTemp = 37.0;
@@ -21,6 +26,14 @@ float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
 
 String serverName = "";
 int timeout = 500;
+
+int getAverageSensorValue() {
+  total = total - readings[readIndex];
+  readings[readIndex] = analogRead(sensorPin);
+  total = total + readings[readIndex];
+  readIndex = (readIndex + 1) % SAMPLES;
+  return total / SAMPLES;
+}
 
 void setup() {
   Serial.begin(115200);
@@ -44,6 +57,9 @@ void setup() {
 
 void loop() {
   Vo = analogRead(ThermistorPin);
+  int sensorValue = getAverageSensorValue();
+  float voltage = sensorValue * (5.0 / 4095.0); // Convert to voltage (assuming 3.3V reference)
+  int turbidity = map(sensorValue, 0, 4095, 100, 0); // Adjusted for ESP32's 12-bit ADC
 
   Serial.print("RAW: ");
   Serial.println(Vo);
@@ -57,10 +73,10 @@ void loop() {
   // Put the values here!!! Random values have been put in as placeholders
   // for testing purposes!
 
-  int temp_adc = random(0, 4095);  // raw ADC for the temperature sensor
-  double temp_val = random(0, 55);  // Calculated temperature in degrees C
-  double turb_adc = random(0, 4095);  // raw ADC for the turbidity sensor
-  double turb_val = random(0, 100) / 100.0;  // Caluculated value for turbidity. It should be a ratio, 0.0 to 1.0
+  int temp_adc = Vo;  // raw ADC for the temperature sensor
+  double temp_val = T;  // Calculated temperature in degrees C
+  double turb_adc = sensorValue;  // raw ADC for the turbidity sensor
+  double turb_val = turbidity / 100 ;  // Caluculated value for turbidity. It should be a ratio, 0.0 to 1.0
 
 
 
