@@ -52,6 +52,8 @@ void setup() {
   serverName = "http://" + findServerIP() + ":5000";
 
   Serial.println("Server name: " + serverName);
+  // Set the attenuation level for the ADC
+  analogSetAttenuation(ADC_11db); // Configure to handle 0-3.3V range
 }
 
 
@@ -64,10 +66,23 @@ void loop() {
   Serial.print("RAW: ");
   Serial.println(Vo);
 
-  R2 = R1 * (1023.0 / (float)Vo - 1.0);
-  logR2 = log(R2);
-  T = (1.0 / (c1 + c2 * logR2 + c3 * logR2 * logR2 * logR2));
-  T = T - 273.15;  // Convert Kelvin to Celsius
+ 
+  if (Vo != 0) {
+    R2 = R1 * (4095.0 / (float)Vo - 1.0); // 4095 because of 12-bit ADC
+    if (R2 > 0) {
+      logR2 = log(R2);
+      T = (1.0 / (c1 + c2 * logR2 + c3 * logR2 * logR2 * logR2));
+      T = T - 273.15; // Convert Kelvin to Celsius
+
+      Serial.print("Temperature: ");
+      Serial.print(T);
+      Serial.println(" C");
+    } else {
+      Serial.println("Error: R2 is non-positive.");
+    }
+  } else {
+    Serial.println("Error: Vo is zero.");
+  }
 
 
   // Put the values here!!! Random values have been put in as placeholders
