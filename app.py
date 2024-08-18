@@ -1,42 +1,26 @@
-from flask import Flask, render_template, request, jsonify
-import random
+import time
 
-from utils import analyze_data, rgb_to_hex, darken_color, hex_to_rgb
+from flask import Flask, render_template, request, jsonify
+
+from utils import analyze_data, get_sensor_status
 
 app = Flask(__name__)
 
-# Global variable to store sensor data
-# data = {
-#     'turbidity': 0.0,
-#     'temperature': 0.0,
-#     'voltage': 0.0,
-#     'analysis': {
-#         "safety_rating": 0.528,
-#         "description": "Drink only in an emergency",
-#         "color": "#198754",
-#         "color_alt": rgb_to_hex(darken_color(hex_to_rgb("#198754")))
-#     }
-# }
 safe_color = "#198754"
 unsafe_color = "#dc3545"
+sensor_timeout = 5  # time in seconds. If elapsed without getting a request from the sensor, it is assumed offline
+sensor_last_online = None
 
+# Global variable to store sensor data
 _dummy_data = {'temperature_sensor': {'rawADC': 3817, 'voltage': 2.71, 'temperature': -273.1499939},
                'turbidity_sensor': {'rawADC': 1049, 'voltage': 1.7, 'turbidity': 0.1}}
 
 data = _dummy_data.copy()
 data.update({"analysis": analyze_data(temperature=_dummy_data["temperature_sensor"]["temperature"],
                                       turbidity=_dummy_data["turbidity_sensor"]["turbidity"],
-                                      safe_color=safe_color, unsafe_color=unsafe_color)})
-# data = {
-#     "analysis": {
-#         "safety_rating": 0.528,
-#         "description": "Drink only in an emergency",
-#         "color": "#198754",
-#         "color_alt": rgb_to_hex(darken_color(hex_to_rgb("#198754")))
-#     }
-#
-# }
-#
+                                      safe_color=safe_color, unsafe_color=unsafe_color),
+             "sensor": get_sensor_status(timeout=sensor_timeout, last_online=sensor_last_online)})
+
 
 @app.route('/')
 def index():
@@ -45,13 +29,11 @@ def index():
 
 @app.route('/update', methods=['POST'])
 def update_data():
-    global data
+    global data, sensor_last_online
     json_data = request.get_json()
     if json_data:
         data.update(json_data)
-        # data['turbidity'] = json_data.get('turbidity', data['turbidity'])
-        # data['temperature'] = json_data.get('temperature', data['temperature'])
-        # data['voltage'] = json_data.get('voltage', data['voltage'])
+        sensor_last_online = time.time()
         analysis_data = analyze_data(data['temperature_sensor']["temperature"],
                                      data['turbidity_sensor']["turbidity"],
                                      safe_color=safe_color, unsafe_color=unsafe_color)
@@ -65,6 +47,7 @@ def update_data():
 @app.route('/data', methods=['GET'])
 def get_data():
     global data
+    data["sensor"].update(get_sensor_status(timeout=sensor_timeout, last_online=sensor_last_online))
     return jsonify(data)
 
 
