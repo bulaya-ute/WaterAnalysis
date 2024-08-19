@@ -90,6 +90,8 @@ def analyze_data(temperature, turbidity, safe_color=None, unsafe_color=None) -> 
 
 def get_sensor_status(timeout: float, last_online: float | None):
     now = time.time()
-    if last_online is None or now - last_online < timeout:
+    if last_online is None:
+        return {"status": "Sensor offline", "color": "#d3d3d3"}
+    elif now - last_online < timeout:
         return {"status": "Sensor online", "color": "green"}
     return {"status": "Sensor offline", "color": "#d3d3d3"}
