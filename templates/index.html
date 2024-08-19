@@ -17,8 +17,8 @@
     <div class="text-center mb-5">
         <h1>Water Analysis</h1>
         <div class="d-flex justify-content-center align-items-center my-2">
-            <div id="sensor-dot" style="width: 10px; height: 10px; background-color: green; border-radius: 50%;"></div>
-            <span id="sensor-status" class="ml-2">Sensor Online</span>
+            <div id="sensor-dot" style="width: 10px; height: 10px; background-color: lightgray; border-radius: 50%;"></div>
+            <span id="sensor-status" class="ml-2">Sensor Offline</span>
         </div>
 
     </div>
@@ -102,10 +102,10 @@
             .then(data => {
                 // Update the sensor data
                 document.getElementById('turb_raw').innerText = data.turbidity_sensor.rawADC;
-                document.getElementById('turb_voltage').innerText = data.turbidity_sensor.voltage.toFixed(1);
-                document.getElementById('turbidity').innerText = data.turbidity_sensor.turbidity.toFixed(1);
+                document.getElementById('turb_voltage').innerText = data.turbidity_sensor.voltage.toFixed(2);
+                document.getElementById('turbidity').innerText = data.turbidity_sensor.turbidity.toFixed(2);
                 document.getElementById('temp_raw').innerText = data.temperature_sensor.rawADC;
-                document.getElementById('temp_voltage').innerText = data.temperature_sensor.voltage.toFixed(1);
+                document.getElementById('temp_voltage').innerText = data.temperature_sensor.voltage.toFixed(2);
                 document.getElementById('temperature').innerText = data.temperature_sensor.temperature.toFixed(1);
 
                 // Update the analysis data

@@ -67,7 +67,7 @@ void loop() {
   Serial.println(Vo);
 
   if (Vo != 0) {
-    R2 = R1 * (4095.0 / (float)Vo - 1.0); // 4095 because of 12-bit ADC
+    R2 = R1 * (4095.0 / (float) Vo - 1.0); // 4095 because of 12-bit ADC
     if (R2 > 0) {
       logR2 = log(R2);
       T = (1.0 / (c1 + c2 * logR2 + c3 * logR2 * logR2 * logR2));
@@ -151,8 +151,8 @@ void loop() {
     Serial.println("WiFi Disconnected");
   }
 
-  // Send data every 3 seconds
-  delay(3000);
+  // Send data every 0.5 seconds
+  delay(500);
 }
 
 
