@@ -10,7 +10,7 @@ safe_color = "#198754"  # Color for 100% safe
 unsafe_color = "#dc3545"  # Color for 0% safe
 sensor_timeout = 5  # time in seconds. If elapsed without getting a request from the sensor, it is assumed offline
 sensor_last_online = None
-temp_offset = -14  # To calibrate the temperature readings
+temp_offset = 0  # To calibrate the temperature readings
 
 # Global variable to store sensor data
 _dummy_data = {'temperature_sensor': {'rawADC': 3817, 'voltage': 2.71, 'temperature': -273.1499939},
@@ -42,7 +42,7 @@ def update_data():
         data["analysis"].update(analysis_data)
         print(f"Data received: {json_data}")
         print(f"Analysis data received: {analysis_data}")
-        return jsonify({"status": "success"}), 200
+        return jsonify({"status": "success", "safety_rating": analysis_data["safety_rating"]}), 200
     return jsonify({"status": "error"}), 400
 
 

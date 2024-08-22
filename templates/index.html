@@ -42,6 +42,10 @@
                             <td class="col-A">Turbidity:</td>
                             <td id="turbidity" class="col-B">{{ data.turbidity }}</td>
                         </tr>
+                        <tr>
+                            <td class="col-A">Safety coefficient:</td>
+                            <td id="turb_safety" class="col-B">{{ data.analysis.turb_safety }}</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -64,7 +68,11 @@
                         </tr>
                         <tr>
                             <td class="col-A">Temperature (C):</td>
-                            <td id="temperature" class="col-B">{{ data.temperature_sensor.temperature }}C</td>
+                            <td id="temperature" class="col-B">{{ data.temperature_sensor.temperature }}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-A">Safety coefficient:</td>
+                            <td id="temp_safety" class="col-B">{{ data.analysis.temp_safety }}</td>
                         </tr>
                         </tbody>
                     </table>

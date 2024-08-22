@@ -24,17 +24,19 @@ def analyze_data(temperature, turbidity, safe_color=None, unsafe_color=None) -> 
     def scale(x):
         return ((1 / (1 + 2 ** (-x))) - 0.5) * 2
 
-    upper_temp, lower_temp = 37, 20
+    lower_temp, upper_temp = 20, 37
     mid_temp = (upper_temp + lower_temp) / 2
 
     # Temperature safety rating
-    temp_safety = scale(abs((temperature - mid_temp) / 4)) ** 3
+    temp_safety = scale(abs((temperature - mid_temp) / 4))
 
     # Turbidity safety rating
-    turbidity_safety = (1.0 - turbidity) ** 2
+    turbidity_safety = (1.0 - turbidity)
 
     # Final safety rating
-    final_safety_rating = temp_safety * turbidity_safety
+    final_safety_rating = (temp_safety * turbidity_safety) ** 0.5
+
+    print(f"Turbidity safety: {turbidity_safety}, Temp safety: {temp_safety}, Final: {final_safety_rating}")
 
     # Determine description
     if final_safety_rating >= 0.8:
