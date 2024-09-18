@@ -17,7 +17,8 @@
     <div class="text-center mb-5">
         <h1>Water Analysis</h1>
         <div class="d-flex justify-content-center align-items-center my-2">
-            <div id="sensor-dot" style="width: 10px; height: 10px; background-color: lightgray; border-radius: 50%;"></div>
+            <div id="sensor-dot"
+                 style="width: 10px; height: 10px; background-color: lightgray; border-radius: 50%;"></div>
             <span id="sensor-status" class="ml-2">Sensor Offline</span>
         </div>
 
@@ -81,6 +82,19 @@
         </div>
     </div>
 
+    <!-- Add Canvas for Real-time Plots -->
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Turbidity over Time</h3>
+            <canvas id="turbidityChart"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>Temperature over Time</h3>
+            <canvas id="temperatureChart"></canvas>
+        </div>
+    </div>
+
+
     <div class="row text-center">
         <div class="col-md-2"></div>
         <div class="col-md-8">
@@ -101,6 +115,7 @@
 <script src="{{ url_for('static', filename='js/jquery-3.5.1.slim.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chart.js') }}"></script>
 
 <!-- JavaScript to update the values and change the card color -->
 <script>
@@ -115,6 +130,8 @@
                 document.getElementById('temp_raw').innerText = data.temperature_sensor.rawADC;
                 document.getElementById('temp_voltage').innerText = data.temperature_sensor.voltage.toFixed(2);
                 document.getElementById('temperature').innerText = data.temperature_sensor.temperature.toFixed(1);
+                document.getElementById('temp_safety').innerText = data.analysis.temp_safety.toFixed(2);
+                document.getElementById('turb_safety').innerText = data.analysis.turb_safety.toFixed(2);
 
                 // Update the analysis data
                 document.getElementById('analysis').innerText = `${(data.analysis.safety_rating * 100).toFixed(1)}% safe`;
@@ -142,5 +159,111 @@
     // Initial fetch
     fetchData();
 </script>
+
+<script>
+    // Initialize empty datasets
+    let turbidityData = [];
+    let temperatureData = [];
+    let timeLabels = [];
+
+    // Get canvas elements for the charts
+    const turbidityCtx = document.getElementById('turbidityChart').getContext('2d');
+    const temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
+
+    // Create the turbidity chart
+    const turbidityChart = new Chart(turbidityCtx, {
+        type: 'line',
+        data: {
+            labels: timeLabels,
+            datasets: [{
+                label: 'Turbidity',
+                data: turbidityData,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Turbidity'
+                    }
+                }
+            }
+        }
+    });
+
+    // Create the temperature chart
+    const temperatureChart = new Chart(temperatureCtx, {
+        type: 'line',
+        data: {
+            labels: timeLabels,
+            datasets: [{
+                label: 'Temperature',
+                data: temperatureData,
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Temperature (°C)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Fetch real-time data and update the charts
+    function fetchDataAndUpdateCharts() {
+        fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+                // Get current timestamp for the x-axis
+                const currentTime = new Date().toLocaleTimeString();
+
+                // Update the labels (time)
+                timeLabels.push(currentTime);
+
+                // Update the data for turbidity and temperature
+                turbidityData.push(data.turbidity_sensor.rawADC);
+                temperatureData.push(data.temperature_sensor.temperature);
+
+                // Keep only the last 20 data points
+                if (timeLabels.length > 20) {
+                    timeLabels.shift();
+                    turbidityData.shift();
+                    temperatureData.shift();
+                }
+
+                // Update both charts
+                turbidityChart.update();
+                temperatureChart.update();
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // Fetch data every second and update charts
+    setInterval(fetchDataAndUpdateCharts, 1000);
+</script>
+
 </body>
 </html>

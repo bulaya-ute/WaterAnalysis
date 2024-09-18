@@ -35,7 +35,8 @@ ADCTemperaturePair adcTempPairs[] = {
   { 2200, 35.0 }, // from body temperature
   { 2353, 28.0 },  // from ambient
   { 2614, 27.0},  // Calibrated from ambient
-  { 2777, 23.0}  // estimated indoor temp. Actual outdoor temp: 18
+  { 2777, 23.0},  // estimated indoor temp. Actual outdoor temp: 18
+  { 3600, 20.0}
 };
 
 // Number of pairs
@@ -145,7 +146,7 @@ void loop() {
     http.begin(client, updateEndpoint);
     http.addHeader("Content-Type", "application/json");
 
-    // JSON data
+    // JSON data containing sensor readings
     StaticJsonDocument<256> jsonData;
     jsonData["temperature_sensor"]["rawADC"] = temp_adc;
     jsonData["temperature_sensor"]["voltage"] = temp_volt;
@@ -172,13 +173,13 @@ void loop() {
       // http.get
     }
 
-    StaticJsonDocument<200> responseJson;
-    const char* safetyRating = responseJson["safety_rating"];
-    double sr = String(safetyRating).toDouble();
-    Serial.println("Safety rating: " + String(sr));
+    // StaticJsonDocument<200> responseJson;
+    // const char* safetyRating = responseJson["safety_rating"];
+    // double sr = String(safetyRating).toDouble();
+    // Serial.println("Safety rating: " + String(safetyRating) + " --- " + String(sr));
 
-    if (sr < 0.5)
-      beep();
+    // if (sr < 0.5)
+    //   beep();
 
 
 

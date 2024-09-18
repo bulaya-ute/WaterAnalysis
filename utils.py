@@ -1,4 +1,5 @@
 import time
+import csv
 
 
 def interpolate_color(color1, color2, t):
@@ -59,6 +60,8 @@ def analyze_data(temperature, turbidity, safe_color=None, unsafe_color=None) -> 
         description = "Highly unsafe. Do not drink!"
 
     result = {
+        "temp_safety": temp_safety,
+        "turb_safety": turbidity_safety,
         "safety_rating": round(final_safety_rating, 3),
         "description": description
     }
@@ -97,3 +100,12 @@ def get_sensor_status(timeout: float, last_online: float | None):
     elif now - last_online < timeout:
         return {"status": "Sensor online", "color": "green"}
     return {"status": "Sensor offline", "color": "#d3d3d3"}
+
+
+def save_to_csv(sensor_data):
+    with open('sensor_readings.csv', mode='a', newline='') as file:
+        writer = csv.writer(file)
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        turbidity = sensor_data['turbidity_sensor']['turbidity']
+        temperature = sensor_data['temperature_sensor']['temperature']
+        writer.writerow([timestamp, turbidity, temperature])

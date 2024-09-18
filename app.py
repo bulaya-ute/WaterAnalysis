@@ -2,7 +2,7 @@ import time
 
 from flask import Flask, render_template, request, jsonify
 
-from utils import analyze_data, get_sensor_status
+from utils import analyze_data, get_sensor_status, save_to_csv
 
 app = Flask(__name__)
 
@@ -34,6 +34,7 @@ def update_data():
     json_data = request.get_json()
     if json_data:
         data.update(json_data)
+        save_to_csv(json_data)
         sensor_last_online = time.time()
         data["temperature_sensor"]["temperature"] += temp_offset
         analysis_data = analyze_data(data['temperature_sensor']["temperature"],
@@ -49,7 +50,10 @@ def update_data():
 @app.route('/data', methods=['GET'])
 def get_data():
     global data
-    data["sensor"].update(get_sensor_status(timeout=sensor_timeout, last_online=sensor_last_online))
+    # Update global variable containing data
+    data["sensor"].update(get_sensor_status(timeout=sensor_timeout,
+                                            last_online=sensor_last_online))
+
     return jsonify(data)
 
 
