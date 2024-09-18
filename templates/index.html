@@ -195,7 +195,9 @@
                     title: {
                         display: true,
                         text: 'Turbidity'
-                    }
+                    },
+                    min: 0,
+                    max: 1
                 }
             }
         }
@@ -244,13 +246,16 @@
                 timeLabels.push(currentTime);
 
                 // Update the data for turbidity and temperature
-                turbidityData.push(data.turbidity_sensor.rawADC);
+                turbidityData.push(data.turbidity_sensor.turbidity);
                 temperatureData.push(data.temperature_sensor.temperature);
 
                 // Keep only the last 20 data points
                 if (timeLabels.length > 20) {
                     timeLabels.shift();
+                    timeLabels.shift();
                     turbidityData.shift();
+                    turbidityData.shift();
+                    temperatureData.shift();
                     temperatureData.shift();
                 }
 

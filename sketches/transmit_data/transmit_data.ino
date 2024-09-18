@@ -7,7 +7,7 @@ const char* ssid = "WaterAnalysisSystem";
 const char* password = "wifi_password";
 
 // List of high priority fourth octets
-const int highPriorityIPs[] = { 212, 69, 88 };
+const int highPriorityIPs[] = { 212, 77, 69, 88 };
 const int numHighPriorityIPs = sizeof(highPriorityIPs) / sizeof(highPriorityIPs[0]);
 
 #define sensorPin 33  // 33 for ESP32
